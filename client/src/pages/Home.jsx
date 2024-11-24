@@ -1,115 +1,129 @@
-import { useState } from 'react';
-import './index.css';
+// src/components/Home.js
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import useCategoryStore from "../utils/store";
 
-const App = () => {
+const Home = () => {
 
-  const [categories] = useState([
-    { id: 1, name: "Work" },
-    { id: 2, name: "Personal" },
-    { id: 3, name: "Shopping" },
-  ]);
+ 
+    
+      const [tasks, setTasks] = useState([] );
+    
+      const [selectedCategory, setSelectedCategory] = useState(null);
+      const [newTaskText, setNewTaskText] = useState("");
+      const [newTaskPriority, setNewTaskPriority] = useState("Medium"); // Default priority
+      const [editingTaskId, setEditingTaskId] = useState(null);
+      const [editTaskText, setEditTaskText] = useState("");
+      const [editTaskPriority, setEditTaskPriority] = useState("");
+    
+      const handleCompleteTask = (taskId) => {
+    
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === taskId ? { ...task, completed: !task.completed } : task
+          )
+        );
+    
+      };
+    
+      const handleDeleteTask = (taskId) => {
+    
+        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    
+      };
+    
+      const handleCategoryClick = (category) => {
+        setSelectedCategory(category);
+        setNewTaskText("");
+        setNewTaskPriority("Medium");
+      };
+    
+      const handleAddTask = () => {
+    
+        if (newTaskText.trim() === "") {
+          alert("Task cannot be empty!");
+          return;
+        }
+    
+        setTasks(selectedCategory.todos);
+        setNewTaskText("");
+        setNewTaskPriority("Medium");
+      };
+    
+      const handleEditTask = (taskId, currentText, currentPriority) => {
+    
+        setEditingTaskId(taskId);
+        setEditTaskText(currentText);
+        setEditTaskPriority(currentPriority);
+    
+      };
+    
+      const handleSaveTask = () => {
+    
+        if (editTaskText.trim() === "") {
+          alert("Task text cannot be empty!");
+          return;
+        }
+    
+        setTasks(selectedCategory.todos  );
+    
+        setEditingTaskId(null);
+        setEditTaskText("");
+        setEditTaskPriority("");
+    
+      };
 
-  const [tasks, setTasks] = useState([
-    { id: 1, text: "Complete project report", completed: false, category: "Work", priority: "High" },
-    { id: 2, text: "Buy groceries", completed: true, category: "Shopping", priority: "Medium" },
-    { id: 3, text: "Call mom", completed: false, category: "Personal", priority: "Low" },
-  ]);
+      function logout() {
+        window.localStorage.removeItem('token')
+        window.location.href = '/login';  // Example redirection to the dashboard page
+    
+      }
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [newTaskText, setNewTaskText] = useState("");
-  const [newTaskPriority, setNewTaskPriority] = useState("Medium"); // Default priority
-  const [editingTaskId, setEditingTaskId] = useState(null);
-  const [editTaskText, setEditTaskText] = useState("");
-  const [editTaskPriority, setEditTaskPriority] = useState("");
 
-  const handleCompleteTask = (taskId) => {
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+      const { categories_data, loading, error, fetchCategories } = useCategoryStore();
 
-  };
-
-  const handleDeleteTask = (taskId) => {
-
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-
-  };
-
-  const handleCategoryClick = (categoryName) => {
-    setSelectedCategory(categoryName);
-    setNewTaskText("");
-    setNewTaskPriority("Medium");
-  };
-
-  const handleAddTask = () => {
-
-    if (newTaskText.trim() === "") {
-      alert("Task cannot be empty!");
-      return;
-    }
-
-    setTasks((prevTasks) => [...prevTasks,
-      {
-        id: prevTasks.length + 1,
-        text: newTaskText,
-        completed: false,
-        category: selectedCategory,
-        priority: newTaskPriority,
-      },
-    ]);
-    setNewTaskText("");
-    setNewTaskPriority("Medium");
-  };
-
-  const handleEditTask = (taskId, currentText, currentPriority) => {
-
-    setEditingTaskId(taskId);
-    setEditTaskText(currentText);
-    setEditTaskPriority(currentPriority);
-
-  };
-
-  const handleSaveTask = () => {
-
-    if (editTaskText.trim() === "") {
-      alert("Task text cannot be empty!");
-      return;
-    }
-
-    setTasks(( prevTasks ) => prevTasks.map(( task ) => task.id === editingTaskId
-          ? { ...task, text: editTaskText, priority: editTaskPriority }
-          : task
-      )
-    );
-
-    setEditingTaskId(null);
-    setEditTaskText("");
-    setEditTaskPriority("");
-
-  };
-
+      useEffect(() => {
+        fetchCategories(); // Récupérer les catégories lors du montage du composant
+      }, [fetchCategories]);
+    
+      if (loading) {
+        return <div>Loading...</div>;
+      }
+    
+      if (error) {
+        return <div>Error: {error}</div>;
+      }
   return (
-
+    
     <div className="container">
+      <h1>Welcome to the To-Do App</h1>
+      <button onClick={logout}>Logout</button>
+
+
+
+   
+
+
       <h1>To-Do List</h1>
       <div className="categories">
-        {categories.map((category) => (
+        {categories_data.map((category) => (
           <div
             key={category.id}
             className="category-card"
-            onClick={() => handleCategoryClick(category.name)}
+            onClick={() => handleCategoryClick(category)}
           >
             <h3>{category.name}</h3>
             <button>View Tasks</button>
           </div>
         ))}
       </div>
+
+   
+
       {selectedCategory && (
         <div className="tasks">
-          <h2>Tasks for {selectedCategory}</h2>
+          <h2>Tasks for {selectedCategory.name}</h2>
           <div className="add-task">
             <input
               type="text"
@@ -127,12 +141,9 @@ const App = () => {
             </select>
             <button onClick={handleAddTask}>Add Task</button>
           </div>
-          {tasks
-            .filter((task) => task.category === selectedCategory)
-            .sort((a, b) => {
-              const priorityOrder = { High: 1, Medium: 2, Low: 3 };
-              return priorityOrder[a.priority] - priorityOrder[b.priority];
-            })
+          { selectedCategory.todos && selectedCategory.todos
+           
+          
             .map((task) => (
               <div
                 key={task.id}
@@ -158,7 +169,7 @@ const App = () => {
                   </div>
                 ) : (
                   <>
-                    <span>{task.text}</span>
+                    <span>{task.title}</span>
                     <span className="priority">[{task.priority} Priority]</span>
                     <div className="task-actions">
                       <button
@@ -188,8 +199,15 @@ const App = () => {
             ))}
         </div>
       )}
+
+
     </div>
   );
 };
 
-export default App;
+export default Home;
+
+
+
+
+
