@@ -4,13 +4,13 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   const todo = await Todo.create(req.body);
-  res.status(201).json(todo);
+  res.status(201).json({message:'Todos created successfuly ' , todo:todo});
 });
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res) => { 
   const todos = await Todo.findAll({ include: ["user", "category"] });
   res.json(todos);
-});
+}); 
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;

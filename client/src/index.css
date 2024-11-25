@@ -5,7 +5,9 @@
 
 
 body {
-  font-family: 'Poppins', sans-serif;
+
+    font-family: 'DM Sans Variable', sans-serif;
+  
   margin: 0;
   padding: 0;
   /* background: linear-gradient(to bottom, #e3f2fd, #ffffff); */
@@ -18,13 +20,12 @@ body {
   padding: 20px;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease-in-out;
 }
 
-.container:hover {
+/* .container:hover {
   transform: scale(1.01);
-}
+} */
 
 h1 {
   text-align: center;
@@ -86,7 +87,6 @@ h1 {
 
 /* Task Section */
 .tasks {
-  background: #f1f2f6;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

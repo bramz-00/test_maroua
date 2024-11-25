@@ -1,8 +1,18 @@
 import React from 'react'
 
-const CategoryCard = () => {
+const CategoryCard = ({category,handleCategoryClick}) => {
   return (
-    <div>CategoryCard</div>
+    <div>
+      <div
+            key={category.id}
+            className="category-card"
+            onClick={() => handleCategoryClick(category)}
+          >
+            <h3>{category.name}</h3>
+          
+          </div>
+
+    </div>
   )
 }
 
