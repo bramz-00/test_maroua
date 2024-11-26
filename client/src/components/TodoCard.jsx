@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TodoCard = ({task,destroy,handleEditTask}) => {
+const TodoCard = ({task,destroy,handleEditTask,todoHanldeCompleted}) => {
   return (
     <div>
 
@@ -11,12 +11,14 @@ const TodoCard = ({task,destroy,handleEditTask}) => {
                 <p class="mt-1 max-w-2xl text-sm text-gray-500">{task.description}</p>
             </div>
             <div class="mt-4 flex items-center justify-between">
-                <p class="text-sm font-medium text-gray-500">Status: <span class="">{task.priority}</span></p>
+            <p class="text-sm font-medium text-gray-500">Status: <span class="">{task.completed ? 'Completed':'Not Yet'}</span></p>
+
+                <p class="text-sm font-medium text-gray-500">Priority : <span class="">{task.priority}</span></p>
                
                 <div className="task-actions">
                       <button
                         className="complete"
-                        // onClick={() => handleCompleteTask(task.id)}
+                        onClick={() => todoHanldeCompleted(task.id)}
                       >
                         {task.completed ? "Undo" : "Complete"}
                       </button>

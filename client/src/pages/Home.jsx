@@ -10,26 +10,20 @@ import CategoryCard from "../components/CategoryCard";
 import TodoIndex from "../components/TodoIndex";
 
 const Home = () => {
-  const priorities = [
-    { id: 1, name: "High" },
-    { id: 2, name: "Medium" },
-    { id: 3, name: "Low" },
-  ];
+ 
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const { categories_data, loading, error, fetchCategories, fetchTodosByCategorie,todos} =    useCategoryStore();
+
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
+    fetchTodosByCategorie(category.id);
   };
 
-
- 
-
-  const { categories_data, loading, error, fetchCategories } =
-    useCategoryStore();
-
   useEffect(() => {
-    fetchCategories(); // Récupérer les catégories lors du montage du composant
+    fetchCategories(); 
   }, [fetchCategories]);
+
 
   if (loading) {
     return (
@@ -60,7 +54,7 @@ const Home = () => {
       </div>
 
       {selectedCategory && (
-        <TodoIndex selectedCategory={selectedCategory}   handleCategoryClick={handleCategoryClick}  fetchCategories={fetchCategories} /> 
+        <TodoIndex handleCategoryClick={handleCategoryClick}  todos={todos} selectedCategory={selectedCategory}    /> 
       )}
     </div>
   );
